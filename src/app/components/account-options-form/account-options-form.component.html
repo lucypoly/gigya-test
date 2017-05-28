@@ -1,0 +1,56 @@
+<div class="container">
+  <h1 class="text-center">Account Options</h1>
+  <h2 [hidden]="!error">{{errorMessage}}</h2>
+  <form *ngIf="!error" [formGroup]="addForm">
+    <div class="form-group">
+      <div *ngFor="let optionName of optionNames">
+        <ng-container *ngIf="isBoolean(account[optionName])">
+          <label class="control-label">{{optionName}}</label>
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-default" [class.active]="isTrue(optionName)" [class.disabled]="readonly">
+              <input type="radio"
+                     [name]="optionName"
+                     (ngModel)="optionName"
+                     [value]="true"
+                     [checked]="isTrue(optionName)"
+                     [formControlName]="optionName">True</label>
+            <label class="btn btn-default" [class.active]="!isTrue(optionName)" [class.disabled]="readonly">
+              <input type="radio"
+                     [name]="optionName"
+                     (ngModel)="optionName"
+                     [value]="false"
+                     [checked]="!isTrue(optionName)"
+                     [formControlName]="optionName">False</label>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!isBoolean(account[optionName])&&(optionName!=='loginIdentifierConflict')">
+          <label class="control-label" [for]="optionName" [class.disabled]="readonly">{{optionName}}</label>
+          <input type="text" class="form-control"
+                 [id]="optionName"
+                 [placeholder]="account[optionName]"
+                 name="optionName"
+                 [formControlName]="optionName"
+                 [readonly]="readonly">
+        </ng-container>
+        <ng-container *ngIf="optionName==='loginIdentifierConflict'">
+          <label class="control-label" [for]="optionName">loginIdentifierConflict</label>
+          <select class="form-control" [id]="optionName"
+                  [formControlName]="optionName">
+            <option value="ignore" [selected]="account[optionName]==='ignore'"
+                    [disabled]="readonly">ignore</option>
+            <option value="failOnSiteConflictingIdentity"
+                    [selected]="account[optionName]==='failOnSiteConflictingIdentity'"
+                    [disabled]="readonly">failOnSiteConflictingIdentity
+            </option>
+            <option value="failOnAnyConflictingIdentity"
+                    [selected]="account[optionName]==='failOnAnyConflictingIdentity'"
+                    [disabled]="readonly">failOnAnyConflictingIdentity
+            </option>
+          </select>
+        </ng-container>
+      </div>
+    </div>
+    <p *ngIf="!addForm.valid&&!readonly">All fields are required!</p>
+    <button *ngIf="addForm.valid" type="submit" class="btn btn-success" (click)="addAccountsOptions()">Send</button>
+  </form>
+</div>
